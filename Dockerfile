@@ -39,6 +39,7 @@ COPY run.sh /home/steam/run.sh
 COPY log.sh /home/steam/log.sh
 
 RUN mkdir /ark && \
+    mkdir -p /home/steam/Steam/steamapps/workshop && \
     chown -R steam:steam /home/steam/ /ark
 
 RUN echo "%sudo   ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers && \
@@ -65,7 +66,7 @@ ENV VALIDATE_SAVE_EXISTS=false \
     ARKCLUSTER=false
 
 # only mount the steamapps directory
-VOLUME /home/steam/.steam/steamapps
+# mount /home/steam/.steam/steamapps if you want to share storage for steam mod staging
 VOLUME /ark
 # optionally shared volumes between servers in a cluster
 VOLUME /arkserver
