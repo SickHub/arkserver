@@ -123,7 +123,7 @@ function testSharedMount() {
 
   # start the second server - it should wait for mods
   serverdir=ark-ragnarok
-  docker run --rm -d --name $serverdir \
+  docker run --rm -it --name $serverdir \
     --env-file $serverdir.env \
     -v $PWD/$serverdir:/ark \
     -v $PWD/$serverdir/saved:/arkserver/ShooterGame/Saved \
