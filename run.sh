@@ -179,6 +179,25 @@ if [ "$LIST_MOUNTS" = "true" ]; then
   exit 0
 fi
 
+if [ "$am_arkAutoUpdateOnStart" != "true" ]; then
+  echo -n "Waiting for ARK server to be updated: "
+  while (! arkmanager checkupdate); do
+    echo -n "."
+    sleep 10
+  done
+  echo
+
+  if [ -n "$am_ark_GameModIds" ]; then
+    echo -n "Waiting for mods to be updated: "
+    # requires arkmanager > v1.6.61a
+    while (arkmanager checkmodupdate --skip-workshop-dir); do
+      echo -n "."
+      sleep 10
+    done
+    echo
+  fi
+fi
+
 arkmanager start --no-background --verbose &
 arkmanpid=$!
 wait $arkmanpid
