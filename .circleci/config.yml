@@ -19,7 +19,7 @@ aliases:
       default: arkserver
       type: string
     tag:
-      default: latest
+      default: undefined
       type: string
   - &build
     - checkout
@@ -37,13 +37,13 @@ aliases:
               --tag << parameters.repo >>/<< parameters.repo_name >>:<< parameters.tag >> .
             docker push << parameters.repo >>/<< parameters.repo_name >>:<< parameters.tag >>
           else        
-            echo "Building << parameters.repo >>/<< parameters.repo_name >>:$TAG based on $VERSION"
+            echo "Building << parameters.repo >>/<< parameters.repo_name >>:<< parameters.steamcmd_version >>-<< parameters.amg_version >>"
             docker build --progress plain \
               --build-arg STEAMCMD_VERSION=<< parameters.steamcmd_version >> \
               --build-arg AMG_BUILD=<< parameters.amg_build >> \
               --build-arg AMG_VERSION=<< parameters.amg_version >> \
-              --tag << parameters.repo >>/<< parameters.repo_name >>:<< parameters.tag >> .
-            docker push << parameters.repo >>/<< parameters.repo_name >>:<< parameters.tag >>
+              --tag << parameters.repo >>/<< parameters.repo_name >>:<< parameters.steamcmd_version >>-<< parameters.amg_version >> .
+            docker push << parameters.repo >>/<< parameters.repo_name >>:<< parameters.steamcmd_version >>-<< parameters.amg_version >>
           fi
 jobs:
   build:
@@ -61,13 +61,13 @@ workflows:
           matrix:
             parameters:
               steamcmd_version: ["latest"]
+              tag: ["latest"]
       - build:
           matrix:
             parameters:
               steamcmd_version: ["latest"]
               amg_build: ["versioned"]
               amg_version: ["master", "v1.6.61a"]
-              tag: ["unstable", "1.6.61a"]
 
   # build tags monthly
   monthly:
@@ -90,4 +90,3 @@ workflows:
               steamcmd_version: ["latest"]
               amg_build: ["versioned"]
               amg_version: ["master", "v1.6.61a"]
-              tag: ["unstable"]
