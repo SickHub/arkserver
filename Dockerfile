@@ -1,6 +1,6 @@
 ARG STEAMCMD_VERSION=latest
 ARG AMG_BUILD=latest
-ARG AMG_VERSION=v1.6.57
+ARG AMG_VERSION=v1.6.61a
 FROM drpsychick/steamcmd:$STEAMCMD_VERSION AS base
 
 USER root
@@ -27,7 +27,7 @@ RUN curl -sL "https://git.io/arkmanager" | bash -s steam
 
 FROM base AS arkmanager-versioned
 ARG AMG_VERSION
-RUN curl -sL "https://raw.githubusercontent.com/arkmanager/ark-server-tools/$AMG_VERSION/netinstall.sh" | bash -s steam
+RUN curl -sL "https://raw.githubusercontent.com/arkmanager/ark-server-tools/$AMG_VERSION/netinstall.sh" | bash -s steam -- --unstable
 
 ARG AMG_BUILD
 FROM arkmanager-$AMG_BUILD
@@ -39,6 +39,7 @@ COPY run.sh /home/steam/run.sh
 COPY log.sh /home/steam/log.sh
 
 RUN mkdir /ark && \
+    mkdir -p /home/steam/Steam/steamapps/workshop && \
     chown -R steam:steam /home/steam/ /ark
 
 RUN echo "%sudo   ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers && \
@@ -65,7 +66,7 @@ ENV VALIDATE_SAVE_EXISTS=false \
     ARKCLUSTER=false
 
 # only mount the steamapps directory
-VOLUME /home/steam/.steam/steamapps
+# mount /home/steam/.steam/steamapps if you want to share storage for steam mod staging
 VOLUME /ark
 # optionally shared volumes between servers in a cluster
 VOLUME /arkserver

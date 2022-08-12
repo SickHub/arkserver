@@ -16,6 +16,7 @@ function testDirectoriesExist() {
   fi
 }
 
+# Test a simple server with only one directory mounted
 function testNewSimpleServer() {
   echo "====> TEST $FUNCNAME"
   mkdir -p ark-theisland
@@ -35,6 +36,7 @@ function testNewSimpleServer() {
   rm -rf ark-theisland
 }
 
+# Test if server fails to start up if it finds shared files in /arkserver
 function testNewSharedServerFail() {
   echo "====> TEST $FUNCNAME"
   mkdir -p ark-theisland arkserver arkclusters
@@ -53,6 +55,7 @@ function testNewSharedServerFail() {
 
   rm -rf ark-theisland arkserver arkclusters
 }
+# Test a server with all shared directories mounted
 function testNewSharedServer() {
   echo "====> TEST $FUNCNAME"
   mkdir -p ark-theisland/saved arkserver arkclusters
@@ -73,6 +76,7 @@ function testNewSharedServer() {
   rm -rf ark-theisland arkserver arkclusters
 }
 
+# Test a server with 'saved' being mounted, overlaying files in that location
 function testMigratedServer() {
   echo "====> TEST $FUNCNAME"
   mkdir -p ark-theisland arkserver arkclusters
@@ -98,33 +102,45 @@ function testMigratedServer() {
   rm -rf ark-theisland arkserver arkclusters
 }
 
-###
+# Test second server waiting for mods
 function testSharedMount() {
   echo "====> TEST $FUNCNAME"
-  mkdir -p ark-theisland arkserver arkclusters
+  mkdir -p ark-theisland ark-ragnarok arkserver-persistent arkclusters
   mkdir -p ark-theisland/server/ShooterGame/Binaries
   mkdir -p ark-theisland/saved/SavedArks
   touch ark-theisland/saved/SavedArks/savegame.dat
+  mkdir -p ark-ragnarok/saved/SavedArks
 
+  # run first server detached
   serverdir=ark-theisland
+  docker run --rm -d --name $serverdir \
+    --env-file $serverdir.env \
+    -v $PWD/$serverdir:/ark \
+    -v $PWD/$serverdir/saved:/arkserver/ShooterGame/Saved \
+    -v $PWD/arkclusters:/arkserver/ShooterGame/Saved/clusters \
+    -v $PWD/arkserver-persistent:/arkserver \
+    $IMAGE:$TAG
+
+  # start the second server - it should wait for mods
+  serverdir=ark-ragnarok
   docker run --rm -it --name $serverdir \
     --env-file $serverdir.env \
     -v $PWD/$serverdir:/ark \
     -v $PWD/$serverdir/saved:/arkserver/ShooterGame/Saved \
     -v $PWD/arkclusters:/arkserver/ShooterGame/Saved/clusters \
-    -v $PWD/arkserver:/arkserver \
-    -e LIST_MOUNTS=true \
+    -v $PWD/arkserver-persistent:/arkserver \
     $IMAGE:$TAG
   [ $? -ne 0 ] && echo "FAIL: docker exec failed"
 
   testDirectoriesExist $serverdir
 
-  rm -rf ark-theisland arkserver arkclusters
+  rm -rf ark-theisland ark-ragnarok arkclusters
 }
 
 testNewSimpleServer
 testNewSharedServerFail
 testNewSharedServer
 testMigratedServer
-testSharedMount
+# optional: this downloads ARK and runs 2 servers
+#testSharedMount
 
