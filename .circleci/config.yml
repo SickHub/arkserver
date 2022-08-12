@@ -1,0 +1,93 @@
+# Required ENV variables
+# DOCKER_USER, DOCKER_PASS
+version: 2.1
+aliases:
+  - &parameters
+    steamcmd_version:
+      default: latest
+      type: string
+    amg_build:
+      default: latest
+      type: string
+    amg_version:
+      default: v1.6.61a
+      type: string
+    repo:
+      default: drpsychick
+      type: string
+    repo_name:
+      default: arkserver
+      type: string
+    tag:
+      default: latest
+      type: string
+  - &build
+    - checkout
+    - setup_remote_docker:
+        version: 20.10.2
+    - run:
+        # plain docker build x86 without cross-platform
+        name: Build images
+        command: |
+          echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin &> /dev/null || exit 1
+          if [ "latest" = "<< parameters.tag >>" ]; then
+            # use default ARGs of image
+            echo "Building << parameters.repo >>/<< parameters.repo_name >>:<< parameters.tag >>"
+            docker build --progress plain \
+              --tag << parameters.repo >>/<< parameters.repo_name >>:<< parameters.tag >> .
+            docker push << parameters.repo >>/<< parameters.repo_name >>:<< parameters.tag >>
+          else        
+            echo "Building << parameters.repo >>/<< parameters.repo_name >>:$TAG based on $VERSION"
+            docker build --progress plain \
+              --build-arg STEAMCMD_VERSION=<< parameters.steamcmd_version >> \
+              --build-arg AMG_BUILD=<< parameters.amg_build >> \
+              --build-arg AMG_VERSION=<< parameters.amg_version >> \
+              --tag << parameters.repo >>/<< parameters.repo_name >>:<< parameters.tag >> .
+            docker push << parameters.repo >>/<< parameters.repo_name >>:<< parameters.tag >>
+          fi
+jobs:
+  build:
+    parameters: *parameters
+    docker:
+      - image: docker
+    resource_class: small
+    steps: *build
+
+workflows:
+  version: 2
+  build-images:
+    jobs:
+      - build:
+          matrix:
+            parameters:
+              steamcmd_version: ["latest"]
+      - build:
+          matrix:
+            parameters:
+              steamcmd_version: ["latest"]
+              amg_build: ["versioned"]
+              amg_version: ["master", "v1.6.61a"]
+              tag: ["unstable"]
+
+  # build tags monthly
+  monthly:
+    triggers:
+      - schedule:
+          # first day of month, 5:03 am, UTC
+          cron: "3 5 1 * *"
+          filters:
+            branches:
+              only:
+                - master
+    jobs:
+      - build:
+          matrix:
+            parameters:
+              steamcmd_version: ["latest"]
+      - build:
+          matrix:
+            parameters:
+              steamcmd_version: ["latest"]
+              amg_build: ["versioned"]
+              amg_version: ["master", "v1.6.61a"]
+              tag: ["unstable"]

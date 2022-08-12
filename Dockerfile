@@ -27,7 +27,7 @@ RUN curl -sL "https://git.io/arkmanager" | bash -s steam
 
 FROM base AS arkmanager-versioned
 ARG AMG_VERSION
-RUN curl -sL "https://raw.githubusercontent.com/arkmanager/ark-server-tools/$AMG_VERSION/netinstall.sh" | bash -s steam
+RUN curl -sL "https://raw.githubusercontent.com/arkmanager/ark-server-tools/$AMG_VERSION/netinstall.sh" | bash -s steam -- --unstable
 
 ARG AMG_BUILD
 FROM arkmanager-$AMG_BUILD

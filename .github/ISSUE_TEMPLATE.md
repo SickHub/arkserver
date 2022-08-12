@@ -4,7 +4,7 @@
 
 ## Image Setup Details
 
-<!-- The Docker image tag of thmhoag/arkserver being used -->
+<!-- The Docker image tag of drpsychick/arkserver being used -->
 * **Image Tag**: 
 <!-- The operating system of the host machine the container is running on (Windows/Mac/Linux).
      Please include the Linux distribution if applicable. -->
@@ -17,7 +17,7 @@
 
     services:
     your-compose-file-here:
-        image: thmhoag/arkserver:0.0.0
+        image: drpsychick/arkserver:0.0.0
     ```
 
 ## Description of Issue
