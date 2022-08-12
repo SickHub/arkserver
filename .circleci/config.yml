@@ -67,7 +67,7 @@ workflows:
               steamcmd_version: ["latest"]
               amg_build: ["versioned"]
               amg_version: ["master", "v1.6.61a"]
-              tag: ["unstable"]
+              tag: ["unstable", "1.6.61a"]
 
   # build tags monthly
   monthly:
