@@ -13,7 +13,6 @@ RUN apt-get update \
     perl-modules \
     lsof \
     libc6-i386 \
-    lib32gcc1 \
     libsdl2-2.0.0:i386 \
     sudo \
     && apt-get autoremove -y \
