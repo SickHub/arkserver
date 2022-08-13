@@ -192,7 +192,7 @@ else
 
   if [ -n "$am_ark_GameModIds" ]; then
     echo -n "Waiting for mods to be updated: "
-    # requires arkmanager > v1.6.61a
+    # requires arkmanager >= v1.6.62
     while (arkmanager checkmodupdate --skip-workshop-dir); do
       echo -n "."
       sleep 10
