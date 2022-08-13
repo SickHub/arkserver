@@ -181,7 +181,7 @@ fi
 
 if [ "$am_arkAutoUpdateOnStart" = "true" ]; then
   echo "Updating mods..."
-  arkmanager update --update-mods
+  arkmanager update --update-mods --no-autostart
 else
   echo -n "Waiting for ARK server to be updated: "
   while (! arkmanager checkupdate); do
