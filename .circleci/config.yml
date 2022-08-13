@@ -18,24 +18,23 @@ aliases:
     repo_name:
       default: arkserver
       type: string
-    tag:
-      default: undefined
-      type: string
   - &build
     - checkout
     - setup_remote_docker:
-        version: 20.10.2
+        version: 20.10.14
     - run:
         # plain docker build x86 without cross-platform
         name: Build images
         command: |
           echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin &> /dev/null || exit 1
-          if [ "latest" = "<< parameters.tag >>" ]; then
-            # use default ARGs of image
-            echo "Building << parameters.repo >>/<< parameters.repo_name >>:<< parameters.tag >>"
+          if [ "latest" = "<< parameters.amg_build >>" ]; then
+            echo "Building << parameters.repo >>/<< parameters.repo_name >>:<< parameters.steamcmd_version >>"
             docker build --progress plain \
-              --tag << parameters.repo >>/<< parameters.repo_name >>:<< parameters.tag >> .
-            docker push << parameters.repo >>/<< parameters.repo_name >>:<< parameters.tag >>
+              --build-arg STEAMCMD_VERSION=<< parameters.steamcmd_version >> \
+              --tag << parameters.repo >>/<< parameters.repo_name >>:<< parameters.steamcmd_version >> .
+            if [ "${CIRCLE_BRANCH}" = "master" ]; then
+              docker push << parameters.repo >>/<< parameters.repo_name >>:<< parameters.steamcmd_version >>
+            fi
           else        
             echo "Building << parameters.repo >>/<< parameters.repo_name >>:<< parameters.steamcmd_version >>-<< parameters.amg_version >>"
             docker build --progress plain \
@@ -60,8 +59,7 @@ workflows:
       - build:
           matrix:
             parameters:
-              steamcmd_version: ["latest"]
-              tag: ["latest"]
+              steamcmd_version: ["latest", "jammy", "focal", "bionic"]
       - build:
           matrix:
             parameters:
@@ -69,12 +67,12 @@ workflows:
               amg_build: ["versioned"]
               amg_version: ["master", "v1.6.61a"]
 
-  # build tags monthly
-  monthly:
+  # build tags weekly
+  weekly:
     triggers:
       - schedule:
-          # first day of month, 5:03 am, UTC
-          cron: "3 5 1 * *"
+          # first day of month, 5:33 am, UTC
+          cron: "33 5 1 * *"
           filters:
             branches:
               only:
@@ -83,7 +81,7 @@ workflows:
       - build:
           matrix:
             parameters:
-              steamcmd_version: ["latest"]
+              steamcmd_version: ["latest", "jammy", "focal", "bionic"]
       - build:
           matrix:
             parameters:
