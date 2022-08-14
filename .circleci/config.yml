@@ -10,7 +10,7 @@ aliases:
       default: latest
       type: string
     amg_version:
-      default: v1.6.61a
+      default: v1.6.62
       type: string
     repo:
       default: drpsychick
@@ -59,13 +59,13 @@ workflows:
       - build:
           matrix:
             parameters:
-              steamcmd_version: ["latest", "jammy", "focal", "bionic"]
+              steamcmd_version: ["latest", "kinetic", "jammy", "focal", "bionic"]
       - build:
           matrix:
             parameters:
               steamcmd_version: ["latest"]
               amg_build: ["versioned"]
-              amg_version: ["master", "v1.6.61a"]
+              amg_version: ["master", "v1.6.62"]
 
   # build tags weekly
   weekly:
@@ -81,10 +81,10 @@ workflows:
       - build:
           matrix:
             parameters:
-              steamcmd_version: ["latest", "jammy", "focal", "bionic"]
+              steamcmd_version: ["latest", "kinetic", "jammy", "focal", "bionic"]
       - build:
           matrix:
             parameters:
               steamcmd_version: ["latest"]
               amg_build: ["versioned"]
-              amg_version: ["master", "v1.6.61a"]
+              amg_version: ["master", "v1.6.62"]

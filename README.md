@@ -11,8 +11,8 @@
 [![Paypal](https://img.shields.io/badge/donate-paypal-00457c.svg?logo=paypal)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=FTXDN7LCDWUEA&source=url)
 [![GitHub Sponsor](https://img.shields.io/badge/github-sponsor-blue?logo=github)](https://github.com/sponsors/DrPsychick)
 
-# arkserver
-Docker image for a dedicated ARK Server with arkmanager.
+# Docker image `drpsychick/arkserver`
+Docker image for a dedicated ARK Survival Evolved server with arkmanager.
 
 **UPDATE August 2022**: I cloned this repo and split from the original, because my PR was never accepted.
 The original is here: [thmhoag/arkserver](https://github.com/thmhoag/arkserver).
@@ -24,7 +24,7 @@ It is heavily based off of [TuRz4m](https://github.com/TuRz4m)'s work located he
 It uses [FezVrasta](https://github.com/FezVrasta)'s [arkmanager/ark-server-tools](https://github.com/arkmanager/ark-server-tools)
 to manage single-instances or a cluster of ARK: Survival Evolved server inside a docker containers.
 
-This image inherits from the [drpsychick/steamcmd](https://github.com/drpsychick/steamcmd) image to include the latest version of `steamcmd`.
+This image builds on the [drpsychick/steamcmd](https://github.com/drpsychick/steamcmd) image to include the latest version of `steamcmd`.
 
 For more information on `arkmanager`, see the repo here: [arkmanager/ark-server-tools](https://github.com/arkmanager/ark-server-tools).
 
