@@ -13,7 +13,7 @@ RUN apt-get update \
     perl-modules \
     lsof \
     libc6-i386 \
-    libsdl2-2.0.0:i386 \
+#    libsdl2-2.0.0:i386 \
     sudo \
     && apt-get autoremove -y \
     && apt-get clean -y \
@@ -37,13 +37,10 @@ COPY arkmanager/instance.cfg /etc/arkmanager/instances/main.cfg
 COPY run.sh /home/steam/run.sh
 COPY log.sh /home/steam/log.sh
 
-RUN mkdir /ark && \
-    mkdir -p /home/steam/Steam/steamapps/workshop && \
-    chown -R steam:steam /home/steam/ /ark
-
-RUN echo "%sudo   ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers && \
-    usermod -a -G sudo steam && \
-    touch /home/steam/.sudo_as_admin_successful
+RUN echo "%sudo   ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers \
+    && usermod -a -G sudo steam \
+    && mkdir /ark \
+    && chown -R steam:steam /ark
 
 WORKDIR /home/steam
 USER steam
