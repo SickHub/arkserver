@@ -3,7 +3,7 @@
   "extends": [
     "config:base"
   ],
-  "enabledManagers": ["regexManagers", "regex"],
+  "enabledManagers": ["regex"],
   "regexManagers": [
     {
       "fileMatch": [
@@ -12,8 +12,15 @@
       "matchStrings": [
         "default: (?<currentValue>.*) # (?<datasource>.*?):(?<depName>.*?)"
       ],
-      "autoReplaceStringTemplate": "default: {{{newValue}}} # {{{datasource}}}/{{{depName}}}",
+      "autoReplaceStringTemplate": "default: {{{newValue}}} # {{{datasource}}}:{{{depName}}}",
       "versioningTemplate": "semver"
+    }
+  ],
+  "packageRules": [
+    {
+      "matchPackageNames": ["arkmanager/ark-server-tools"],
+      "matchManagers": ["regex"],
+      "enabled": true
     }
   ]
 }
