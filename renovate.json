@@ -3,6 +3,9 @@
   "extends": [
     "config:base"
   ],
+  "enabledManagers": [
+    "regex"
+  ],
   "regexManagers": [
     {
       "fileMatch": [
@@ -11,6 +14,7 @@
       "matchStrings": [
         "default: (?<currentValue>.*) # (?<datasource>[a-z-]*?)/(?<depName>.*?)"
       ],
+      "autoReplaceStringTemplate": "default: {{{newValue}}} # {{{datasource}}}/{{{depName}}}",
       "versioningTemplate": "semver"
     }
   ]
