@@ -1,0 +1,17 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:base"
+  ],
+  "regexManagers": [
+    {
+      "fileMatch": [
+        "^.circleci/config.yml$"
+      ],
+      "matchStrings": [
+        "default: (?<currentValue>.*) # (?<datasource>[a-z-]*?)/(?<depName>.*?)"
+      ],
+      "versioningTemplate": "semver"
+    }
+  ]
+}
