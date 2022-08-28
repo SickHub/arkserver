@@ -3,15 +3,17 @@
   "extends": [
     "config:base"
   ],
-  "regex": {
-    "enabled": true,
-    "fileMatch": [
-      "^.circleci/config.yml$"
-    ],
-    "matchStrings": [
-      "default: (?<currentValue>.*) # (?<datasource>.*?):(?<depName>.*?)"
-    ],
-    "autoReplaceStringTemplate": "default: {{{newValue}}} # {{{datasource}}}/{{{depName}}}",
-    "versioningTemplate": "semver"
-  }
+  "enabledManagers": ["regexManagers", "regex"],
+  "regexManagers": [
+    {
+      "fileMatch": [
+        "^.circleci/config.yml$"
+      ],
+      "matchStrings": [
+        "default: (?<currentValue>.*) # (?<datasource>.*?):(?<depName>.*?)"
+      ],
+      "autoReplaceStringTemplate": "default: {{{newValue}}} # {{{datasource}}}/{{{depName}}}",
+      "versioningTemplate": "semver"
+    }
+  ]
 }
