@@ -16,7 +16,7 @@
         "^Dockerfile$"
       ],
       "matchStrings": [
-        "default: (?<currentValue>.*) # (?<datasource>.*?):(?<depName>.*?)",
+        "\\sdefault: (?<currentValue>.*) # (?<datasource>.*?):(?<depName>.*?)",
         "# (?<datasource>.*?):(?<depName>.*?)\\sARG .*?_VERSION=(?<currentValue>.*)"
       ],
       "versioningTemplate": "semver"
