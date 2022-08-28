@@ -3,16 +3,22 @@
   "extends": [
     "config:base"
   ],
-  "enabledManagers": ["regex"],
+  "circleci": {
+    "enabled": false
+  },
+  "dockerfile": {
+    "enabled": false
+  },
   "regexManagers": [
     {
       "fileMatch": [
-        "^.circleci/config.yml$"
+        "^.circleci/config.yml$",
+        "^Dockerfile$"
       ],
       "matchStrings": [
-        "default: (?<currentValue>.*) # (?<datasource>.*?):(?<depName>.*?)"
+        "default: (?<currentValue>.*) # (?<datasource>.*?):(?<depName>.*?)",
+        "# (?<datasource>.*?):(?<depName>.*?)\\sARG .*?_VERSION=(?<currentValue>.*)"
       ],
-      "autoReplaceStringTemplate": "default: {{{newValue}}} # {{{datasource}}}:{{{depName}}}",
       "versioningTemplate": "semver"
     }
   ],
