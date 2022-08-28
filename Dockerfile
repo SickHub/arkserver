@@ -1,7 +1,7 @@
 ARG STEAMCMD_VERSION=latest
 ARG AMG_BUILD=latest
 # github-releases:arkmanager/ark-server-tools
-ARG AMG_VERSION=v1.6.62
+ARG AMG_VERSION=v1.6.61
 FROM drpsychick/steamcmd:$STEAMCMD_VERSION AS base
 
 USER root
