@@ -3,12 +3,7 @@
   "extends": [
     "config:base"
   ],
-  "circleci": {
-    "enabled": false
-  },
-  "dockerfile": {
-    "enabled": false
-  },
+  "enabledManagers": ["regex"],
   "regexManagers": [
     {
       "fileMatch": [
@@ -16,17 +11,10 @@
         "^Dockerfile$"
       ],
       "matchStrings": [
-        "\\sdefault: (?<currentValue>.*) # (?<datasource>.*?):(?<depName>.*?)",
-        "# (?<datasource>.*?):(?<depName>.*?)\\sARG .*?_VERSION=(?<currentValue>.*)"
+        "\\sdefault: (?<currentValue>.*?) # (?<datasource>.*?):(?<depName>.*?)\\n",
+        "# (?<datasource>.*?):(?<depName>.*?)\\sARG .*?_VERSION=(?<currentValue>.*)\\n"
       ],
       "versioningTemplate": "semver"
-    }
-  ],
-  "packageRules": [
-    {
-      "matchPackageNames": ["arkmanager/ark-server-tools"],
-      "matchManagers": ["regex"],
-      "enabled": true
     }
   ]
 }
