@@ -6,16 +6,14 @@
   "enabledManagers": [
     "regex"
   ],
-  "regexManagers": [
-    {
-      "fileMatch": [
-        "^.circleci/config.yml$"
-      ],
-      "matchStrings": [
-        "default: (?<currentValue>.*) # (?<datasource>[a-z-]*?)/(?<depName>.*?)"
-      ],
-      "autoReplaceStringTemplate": "default: {{{newValue}}} # {{{datasource}}}/{{{depName}}}",
-      "versioningTemplate": "semver"
-    }
-  ]
+  "regex": {
+    "fileMatch": [
+      "^.circleci/config.yml$"
+    ],
+    "matchStrings": [
+      "default: (?<currentValue>.*) # (?<datasource>[^/]*?)/(?<depName>.*?)"
+    ],
+    "autoReplaceStringTemplate": "default: {{{newValue}}} # {{{datasource}}}/{{{depName}}}",
+    "versioningTemplate": "semver"
+  }
 }
