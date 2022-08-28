@@ -3,15 +3,13 @@
   "extends": [
     "config:base"
   ],
-  "enabledManagers": [
-    "regex"
-  ],
   "regex": {
+    "enabled": true,
     "fileMatch": [
       "^.circleci/config.yml$"
     ],
     "matchStrings": [
-      "default: (?<currentValue>.*) # (?<datasource>[^/]*?)/(?<depName>.*?)"
+      "default: (?<currentValue>.*) # (?<datasource>.*?):(?<depName>.*?)"
     ],
     "autoReplaceStringTemplate": "default: {{{newValue}}} # {{{datasource}}}/{{{depName}}}",
     "versioningTemplate": "semver"
