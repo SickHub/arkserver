@@ -31,7 +31,7 @@ fi
 
 if [ "$ARKCLUSTER" = "true" ]; then
   # directory is created when something is mounted to 'clusters'
-  [ -d "$ARKSERVER/ShooterGame/Saved" ] && chown steam:steam $ARKSERVER/ShooterGame/Saved
+  [ -d "$ARKSERVER/ShooterGame/Saved" ] && sudo chown steam:steam $ARKSERVER/ShooterGame/Saved
   echo "Shared clusters files in $ARKSERVER/ShooterGame/Saved/clusters..."
   if [ -z "$(mount | grep "on $ARKSERVER/ShooterGame/Saved/clusters ")" ]; then
     echo "===> ABORT !"
