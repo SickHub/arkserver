@@ -40,8 +40,8 @@ COPY log.sh /home/steam/log.sh
 
 RUN echo "%sudo   ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers \
     && usermod -a -G sudo steam \
-    && mkdir /ark \
-    && chown -R steam:steam /ark
+    && mkdir /ark /arkserver \
+    && chown -R steam:steam /ark /arkserver
 
 WORKDIR /home/steam
 USER steam
