@@ -14,7 +14,7 @@ RUN apt-get update \
     perl-modules \
     lsof \
     libc6-i386 \
-#    libsdl2-2.0.0:i386 \
+    #    libsdl2-2.0.0:i386 \
     sudo \
     && apt-get autoremove -y \
     && apt-get clean -y \
@@ -23,7 +23,7 @@ RUN apt-get update \
     && rm -rf /var/tmp/*
 
 FROM base AS arkmanager-latest
-RUN curl -sL "https://git.io/arkmanager" | bash -s steam
+RUN curl -sL "https://raw.githubusercontent.com/arkmanager/ark-server-tools/master/netinstall.sh" | bash -s steam
 
 FROM base AS arkmanager-versioned
 ARG AMG_VERSION
