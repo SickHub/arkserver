@@ -198,6 +198,8 @@ if [ "$am_arkAutoUpdateOnStart" != "true" ]; then
   fi
 fi
 
+steamcmd +quit
+
 arkmanager start --no-background --verbose &
 arkmanpid=$!
 wait $arkmanpid
