@@ -23,7 +23,7 @@ RUN apt-get update \
     && rm -rf /var/tmp/*
 
 FROM base AS arkmanager-latest
-RUN curl -sL "https://git.io/arkmanager" | bash -s steam
+RUN curl -sL "https://raw.githubusercontent.com/arkmanager/ark-server-tools/master/netinstall.sh" | bash -s steam
 
 FROM base AS arkmanager-versioned
 ARG AMG_VERSION
