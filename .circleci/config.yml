@@ -10,7 +10,7 @@ aliases:
       default: latest
       type: string
     amg_version:
-      default: v1.6.62 # github-releases:arkmanager/ark-server-tools
+      default: v1.6.63 # github-releases:arkmanager/ark-server-tools
       type: string
     repo:
       default: drpsychick
