@@ -198,6 +198,14 @@ if [ "$am_arkAutoUpdateOnStart" != "true" ]; then
   fi
 fi
 
+# fix for broken steamcmd app_info_print: execute install/update manually, checking for updates fails.
+# https://github.com/ValveSoftware/steam-for-linux/issues/9683#issuecomment-1826928761
+if [ ! -d "$ARKSERVER/steamapps/appmanifest_376030.acf" ]; then
+  arkmanager install
+elif [ "$am_arkAutoUpdateOnStart" = "true" ]; then
+  arkmanager update
+fi
+
 arkmanager start --no-background --verbose &
 arkmanpid=$!
 wait $arkmanpid
