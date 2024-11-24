@@ -203,7 +203,7 @@ fi
 if [ ! -f "$ARKSERVER/steamapps/appmanifest_376030.acf" ]; then
   arkmanager install
 elif [ "$am_arkAutoUpdateOnStart" = "true" ]; then
-  arkmanager update
+  arkmanager update --force
 fi
 
 arkmanager start --no-background --verbose &
