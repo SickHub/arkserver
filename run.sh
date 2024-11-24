@@ -155,9 +155,10 @@ function stop {
 	exit 0
 }
 
-# Stop server in case of signal INT or TERM
-trap stop INT
-trap stop TERM
+# Stop server in case of signal INT, QUIT or TERM
+# enable job control to catch signals
+set -m
+trap stop INT QUIT TERM
 
 # log from RCON to stdout
 if [ $LOG_RCONCHAT -gt 0 ]; then
@@ -206,6 +207,7 @@ elif [ "$am_arkAutoUpdateOnStart" = "true" ]; then
   arkmanager update --force --no-autostart
 fi
 
-arkmanager start --no-background --verbose &
+# run in subshell, so it does not trap signals
+(arkmanager start --no-background --verbose) &
 arkmanpid=$!
 wait $arkmanpid
