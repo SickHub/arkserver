@@ -58,7 +58,7 @@ workflows:
       - build:
           matrix:
             parameters:
-              steamcmd_version: ["latest", "lunar", "jammy", "focal"]
+              steamcmd_version: ["latest", "jammy", "focal"]
       - build:
           matrix:
             parameters:
@@ -80,7 +80,7 @@ workflows:
       - build:
           matrix:
             parameters:
-              steamcmd_version: ["latest", "lunar", "jammy", "focal"]
+              steamcmd_version: ["latest", "jammy", "focal"]
       - build:
           matrix:
             parameters:
