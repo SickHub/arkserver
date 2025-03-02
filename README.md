@@ -103,7 +103,10 @@ am_arkflag_ForceAllowCaveFlyers=
 ## Volumes
 
 This image has two main volumes that should be mounted as named volumes or host directories for the persistence of the server install and all related configuration files. More information on Docker volumes here: [Docker: Use Volumes](https://docs.docker.com/storage/volumes/)
-The optional volumes can be used to share the server binary files or `clusters` files required to run an ARK cluster and be able to jump from one map to another. 
+The optional volumes can be used to share the server binary files or `clusters` files required to run an ARK cluster and be able to jump from one map to another.
+
+> [!IMPORTANT]
+> The `steam` user in the image has UID/GID 1001/1001. All files on the host must give read/write access to this UID/GID.
 
 | Path | Description |
 | - | - |
