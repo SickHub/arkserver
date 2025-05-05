@@ -142,7 +142,8 @@ if [ $CRONNUMBER -gt 0 ]; then
 	sudo service cron start
 
 	echo "Loading crontab..."
-        crontab /ark/config/crontab
+	# We load the crontab file if it exist.
+	crontab /ark/config/crontab
 	
 else
 	echo "No crontab set."
