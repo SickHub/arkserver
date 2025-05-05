@@ -114,5 +114,17 @@ if [ ! -f /ark/config/crontab ]; then
 # |  |  .---------- day of month (1 - 31)
 # |  |  |  .------- month (1 - 12) OR jan,feb,mar,apr ...
 # |  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7)
+# |  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7) OR sun,mon,tue,wed,thu,fri,sat
+# |  |  |  |  |
+# *  *  *  *  * user-name  command to be executed
+
+# Examples for Ark:
+# 0 * * * * arkmanager update				# update every hour
+# */15 * * * * arkmanager backup			# backup every 15min
+# 0 0 * * * arkmanager backup				# backup every day at midnight
+*/30 * * * * arkmanager update --update-mods --warn --saveworld
+10 */8 * * * arkmanager saveworld && arkmanager backup
+15 10 * * * arkmanager restart --warn --saveworld
+
 EOF
 fi
