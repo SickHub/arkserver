@@ -105,6 +105,12 @@ fi
 echo -e "\n\narkserverroot=\"$ARKSERVER\"\n" >> /ark/config/arkmanager.cfg
 printenv | sed -n -r 's/am_(.*)=(.*)/\1=\"\2\"/ip' >> /ark/config/arkmanager.cfg
 
+if [ "$HAS_PRIVILEGES" = false ]; then
+ echo "non-root, non-sudo user detected, cannot setup Crontab..."
+elif [ -w /var/spool/cron/crontabs/ ]; then
+ echo "Hardened filesystem detect, cannot setup Crontab..."
+else
+
 if [ ! -f /ark/config/crontab ]; then
   echo "Creating crontab..."
   cat << EOF >> /ark/config/crontab
@@ -136,11 +142,13 @@ if [ $CRONNUMBER -gt 0 ]; then
 	sudo service cron start
 
 	echo "Loading crontab..."
-	# We load the crontab file if it exist.
-	crontab /ark/config/crontab
+        crontab /ark/config/crontab
+	
 else
 	echo "No crontab set."
 fi
+fi
+
 
 # Create symlinks for configs
 [ -f /ark/config/AllowedCheaterSteamIDs.txt ] && ln -sf /ark/config/AllowedCheaterSteamIDs.txt $ARKSERVER/ShooterGame/Saved/AllowedCheaterSteamIDs.txt
