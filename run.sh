@@ -15,10 +15,16 @@ echo "##########################################################################
 # Determine if the user has root or sudo privileges
 if [ "$(id -u)" -eq 0 ]; then
     HAS_PRIVILEGES=true
+    echo "detected root user... Continuing..."
+elif id -Gn $(whoami) | grep -qw 'root'; then
+    HAS_PRIVILEGES=true
+    echo "Detected membership in the 'root' group (GID 0)... Continuing..."
 elif sudo -n true 2>/dev/null; then
     HAS_PRIVILEGES=true
+    echo "detected sudo capable user... Continuing..."
 else
     HAS_PRIVILEGES=false
+    echo "detected non-root user that is not sudo-capable... Continuing, without root or sudo...."
 fi
 
 # Ensure correct file permissions (checking ownership) only if root/sudo is available
