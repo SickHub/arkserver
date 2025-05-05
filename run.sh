@@ -128,3 +128,113 @@ if [ ! -f /ark/config/crontab ]; then
 
 EOF
 fi
+
+# If there is uncommented line in the file
+CRONNUMBER=`grep -v "^#" /ark/config/crontab | wc -l`
+if [ $CRONNUMBER -gt 0 ]; then
+	echo "Starting cron service..."
+	sudo service cron start
+
+	echo "Loading crontab..."
+	# We load the crontab file if it exist.
+	crontab /ark/config/crontab
+else
+	echo "No crontab set."
+fi
+
+# Create symlinks for configs
+[ -f /ark/config/AllowedCheaterSteamIDs.txt ] && ln -sf /ark/config/AllowedCheaterSteamIDs.txt $ARKSERVER/ShooterGame/Saved/AllowedCheaterSteamIDs.txt
+[ -f /ark/config/Engine.ini ] && ln -sf /ark/config/Engine.ini $ARKSERVER/ShooterGame/Saved/Config/LinuxServer/Engine.ini
+[ -f /ark/config/Game.ini ] && ln -sf /ark/config/Game.ini $ARKSERVER/ShooterGame/Saved/Config/LinuxServer/Game.ini
+[ -f /ark/config/GameUserSettings.ini ] && ln -sf /ark/config/GameUserSettings.ini $ARKSERVER/ShooterGame/Saved/Config/LinuxServer/GameUserSettings.ini
+
+if [ "$VALIDATE_SAVE_EXISTS" = "true" -a ! -z "$am_serverMap" ]; then
+	savepath="$ARKSERVER/ShooterGame/Saved/$am_ark_AltSaveDirectoryName"
+	savefile="$am_serverMap.ark"
+	echo "Validating that a save file exists for $am_serverMap"
+	echo "Checking $savepath"
+	if [! -f "$savepath/$savefile" ]; then
+		echo "$savefile not found!"
+		echo "Attempting to notify via Discord..."
+		arkmanager notify "Critical error: unable to find $savefile in $savepath!"
+
+		# wait on failure so we don't spam docker logs
+		sleep 5m
+		exit 1
+	else
+		echo "$savefile found."
+	fi
+else
+	echo "Save file validation is not enabled."
+fi
+
+if [ "$BACKUP_ONSTART" = "true" ]; then
+	echo "Backing up on start..."
+	arkmanager backup
+else
+	echo "Backup on start is not enabled."
+fi
+
+function stop {
+	arkmanager broadcast "Server is shutting down"
+	arkmanager notify "Server is shutting down"
+	arkmanager stop
+	exit 0
+}
+
+# Stop server in case of signal INT, QUIT or TERM
+# enable job control to catch signals
+set -m
+trap stop INT QUIT TERM
+
+# log from RCON to stdout
+if [ $LOG_RCONCHAT -gt 0 ]; then
+  bash -c ./log.sh &
+fi
+
+if [ "$LIST_MOUNTS" = "true" ]; then
+  echo "LIST Mounts:"
+  echo "ARKSERVER_SHARED=$ARKSERVER_SHARED ARKCLUSTER=$ARKCLUSTER"
+  for d in /ark $ARKSERVER_SHARED $ARKSERVER/ShooterGame/Saved/ $ARKSERVER/ShooterGame/Saved/SavedArks; do
+    echo "--> $d"
+    ls -la $d
+  done
+  if [ "$ARKCLUSTER" = "true" ]; then
+    echo "--> $ARKSERVER/ShooterGame/Saved/clusters"
+    ls -la $ARKSERVER/ShooterGame/Saved/clusters
+  fi
+  mount | grep "on /ark"
+  exit 0
+fi
+
+if [ "$am_arkAutoUpdateOnStart" != "true" ]; then
+  echo -n "Waiting for ARK server to be updated: "
+  while (! arkmanager checkupdate); do
+    echo -n "."
+    sleep 10
+  done
+  echo
+
+  if [ -n "$am_ark_GameModIds" ]; then
+    echo -n "Waiting for mods to be updated: "
+    # requires arkmanager >= v1.6.62
+    while (arkmanager checkmodupdate --skip-workshop-dir); do
+      echo -n "."
+      sleep 10
+    done
+    echo
+  fi
+fi
+
+# fix for broken steamcmd app_info_print: execute install/update manually, checking for updates fails.
+# https://github.com/ValveSoftware/steam-for-linux/issues/9683#issuecomment-1826928761
+if [ ! -f "$ARKSERVER/steamapps/appmanifest_376030.acf" ]; then
+  arkmanager install
+elif [ "$am_arkAutoUpdateOnStart" = "true" ]; then
+  arkmanager update --force --no-autostart
+fi
+
+# run in subshell, so it does not trap signals
+(arkmanager start --no-background --verbose) &
+arkmanpid=$!
+wait $arkmanpid
