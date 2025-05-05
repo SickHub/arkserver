@@ -112,7 +112,7 @@ elif [ -w /var/spool/cron/crontabs/ ]; then
 else
 
 if [ ! -f /ark/config/crontab ]; then
-  echo "Creating crontab..."
+  echo "No crontab found, Creating crontab..."
   cat << EOF >> /ark/config/crontab
 # Example of job definition:
 # .---------------- minute (0 - 59)
