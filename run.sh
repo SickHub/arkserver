@@ -13,22 +13,16 @@ echo "# Ark Server - " `date`
 echo "###########################################################################"
 
 # Determine if the user has root or sudo privileges
-if [ "$(id -u)" -eq 0 ]; then
-    HAS_PRIVILEGES=true
-    echo "detected root user... Continuing..."
-elif id -Gn $(whoami) | grep -qw 'root'; then
-    HAS_PRIVILEGES=true
-    echo "Detected membership in the 'root' group (GID 0)... Continuing..."
-elif sudo -n true 2>/dev/null; then
-    HAS_PRIVILEGES=true
-    echo "detected sudo capable user... Continuing..."
+if sudo -n true 2>/dev/null; then
+    HAS_PRIVILEGES="true"
+    echo "Detected sudo capable user... Continuing..."
 else
-    HAS_PRIVILEGES=false
-    echo "detected non-root user that is not sudo-capable... Continuing, without root or sudo...."
+    HAS_PRIVILEGES="false"
+    echo "Detected user that is not sudo-capable, Continuing without sudo..."
 fi
 
 # Ensure correct file permissions (checking ownership) only if root/sudo is available
-if [ "$HAS_PRIVILEGES" = true ]; then
+if [ "$HAS_PRIVILEGES" = "true" ]; then
     echo "Ensuring correct permissions..."
     sudo find /ark -not -user steam -o -not -group steam -exec chown -v steam:steam {} \;
     sudo find /home/steam -not -user steam -o -not -group steam -exec chown -v steam:steam {} \;
@@ -38,7 +32,7 @@ fi
 
 if [ -n "$ARKSERVER_SHARED" ]; then
   # Directory created when something is mounted to 'Saved'
-  if [ "$HAS_PRIVILEGES" = true ] && [ -d "$ARKSERVER_SHARED/ShooterGame" ]; then
+  if [ "$HAS_PRIVILEGES" = "true" ] && [ -d "$ARKSERVER_SHARED/ShooterGame" ]; then
     sudo chown steam:steam $ARKSERVER_SHARED/ShooterGame
   fi
   echo "Shared server files in $ARKSERVER_SHARED..."
@@ -57,7 +51,7 @@ fi
 
 # Cluster setup
 if [ "$ARKCLUSTER" = "true" ]; then
-  if [ "$HAS_PRIVILEGES" = true ] && [ -d "$ARKSERVER/ShooterGame/Saved" ]; then
+  if [ "$HAS_PRIVILEGES" = "true" ] && [ -d "$ARKSERVER/ShooterGame/Saved" ]; then
     sudo chown steam:steam $ARKSERVER/ShooterGame/Saved
   fi
   echo "Shared clusters files in $ARKSERVER/ShooterGame/Saved/clusters..."
