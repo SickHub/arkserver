@@ -137,7 +137,8 @@ echo "Creating config symlinks..."
 if [ "$VALIDATE_SAVE_EXISTS" = "true" ] && [ -n "$am_serverMap" ]; then
   savepath="$ARKSERVER/ShooterGame/Saved/$am_ark_AltSaveDirectoryName"
   savefile="$am_serverMap.ark"
-  echo "Checking if save exists: $savefile"
+	echo "Validating that a save file exists for $am_serverMap"
+	echo "Checking $savepath"
   if [ ! -f "$savepath/$savefile" ]; then
     echo "ERROR: Save file '$savefile' not found at '$savepath'!"
     arkmanager notify "Critical error: unable to find $savefile in $savepath!"
