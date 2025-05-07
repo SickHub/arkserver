@@ -4,6 +4,7 @@
 SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 REPODIR="$(dirname "$SCRIPTDIR")"
 ARKSERVER=${ARKSERVER_SHARED:-"/ark/server"}
+VERBOSE=${VERBOSE:-"--verbose"}
 
 # Always fail script if a command fails
 set -eo pipefail
@@ -233,12 +234,12 @@ fi
 # fix for broken steamcmd app_info_print: execute install/update manually, checking for updates fails.
 # https://github.com/ValveSoftware/steam-for-linux/issues/9683#issuecomment-1826928761
 if [ ! -f "$ARKSERVER/steamapps/appmanifest_376030.acf" ]; then
-  arkmanager install ${VERBOSE:+--verbose}
+  arkmanager install ${VERBOSE}
 elif [ "$am_arkAutoUpdateOnStart" = "true" ]; then
-  arkmanager update --force --no-autostart ${VERBOSE:+--verbose}
+  arkmanager update --force --no-autostart ${VERBOSE}
 fi
 
 # run in subshell, so it does not trap signals
-(arkmanager start --no-background --verbose) &
+(arkmanager start --no-background ${VERBOSE}) &
 arkmanpid=$!
 wait $arkmanpid
