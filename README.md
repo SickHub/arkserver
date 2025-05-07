@@ -65,6 +65,30 @@ $ docker run -d \
 
 If the exposed ports are modified (in the case of multiple containers/servers on the same host) the `arkmanager` config will need to be modified to reflect the change as well. This is required so that `arkmanager` can properly check the server status and so that the ARK server itself can properly publish its IP address and query port to steam.
 
+
+#### Running without sudo capability or root
+
+Its perfectly possible to run the container without sudo or root user.
+However, this means a lot of automated permission fixes and checks will be skipped as well.
+
+For this to be handled correctly:
+- Use UID/GID 1001
+- Ensure all required folders are mounted and have their permissions *manually* set to 1001/1001 before using the container
+- `/arkserver/ShooterGame` has to be added as its own seperate mountpoint or folder with correct permissions, before the container is ran.
+- No Linux capabilities are needed
+- privileged mode is not needed
+- The container will not attempt any Privilege Escalation
+
+
+#### Running with a hardened filesystem
+
+Some container platforms, primarily on kubernetes, offer the option to disable writability to the container root filesystem `readOnlyRootFilesystem`.
+The container is perfectly capable of being ran with this setting enabled, with the following caveats:
+
+- All folders containing any data being writhen, temporary or otherwise, explicitly need a writable folder attached
+- if `/var/spool/cron/crontabs/` is not mounted to a writable folder, crontab will *not* be setup
+
+
 ## Environment Variables
 
 A set of required environment variables have default values provided as part of the image:
@@ -115,6 +139,8 @@ The optional volumes can be used to share the server binary files or `clusters` 
 | /arkserver | (optional, $ARKSERVER_SHARED) Directory that contains the server binary files from steam, shared for multiple instances |
 | /arkserver/ShooterGame/Saved | (depends) Directory that contains the game save files - must be mounted if using shared server files |
 | /arkserver/ShooterGame/Saved/clusters | (depends) Directory that contains the shared cluster files required to jump from one ARK server to another - must be mounted if using shared server files |
+| /var/spool/cron/crontabs/ | crontab storage |
+
 
 ### Subdirectories of /ark
 
