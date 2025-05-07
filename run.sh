@@ -129,7 +129,7 @@ fi
 # If there is uncommented line in the file
 CRONNUMBER=`grep -v "^#" /ark/config/crontab | wc -l`
 if [ $CRONNUMBER -gt 0 ]; then
-if [ "$HAS_PRIVILEGES" = false ]; then
+if [ "$HAS_PRIVILEGES" = "false" ]; then
         echo "Starting cron in background as non-root..."
         cron && tail -f /dev/null
 else
