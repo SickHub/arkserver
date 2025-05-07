@@ -74,9 +74,11 @@ However, this means a lot of automated permission fixes and checks will be skipp
 For this to be handled correctly:
 - Use UID/GID 1001
 - Ensure all required folders are mounted and have their permissions *manually* set to 1001/1001 before using the container
+- `/arkserver/ShooterGame` has to be added as its own seperate mountpoint or folder with correct permissions, before the container is ran.
 - No Linux capabilities are needed
 - privileged mode is not needed
 - The container will not attempt any Privilege Escalation
+
 
 #### Running with a hardened filesystem
 
