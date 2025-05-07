@@ -57,7 +57,8 @@ if [ "$ARKCLUSTER" = "true" ]; then
   echo "Shared clusters files in $ARKSERVER/ShooterGame/Saved/clusters..."
   if [ -z "$(mount | grep "on $ARKSERVER/ShooterGame/Saved/clusters ")" ]; then
     echo "===> ABORT !"
-    echo "You have ARKCLUSTER=true set, but your shared clusters directory is not mounted!"
+    echo "You seem to using ARKCLUSTER=true"
+    echo "But you have NOT mounted your shared clusters directory to '$ARKSERVER/ShooterGame/Saved/clusters'"
     exit 1
   fi
 fi
