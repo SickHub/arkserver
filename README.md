@@ -137,6 +137,8 @@ The optional volumes can be used to share the server binary files or `clusters` 
 | /arkserver | (optional, $ARKSERVER_SHARED) Directory that contains the server binary files from steam, shared for multiple instances |
 | /arkserver/ShooterGame/Saved | (depends) Directory that contains the game save files - must be mounted if using shared server files |
 | /arkserver/ShooterGame/Saved/clusters | (depends) Directory that contains the shared cluster files required to jump from one ARK server to another - must be mounted if using shared server files |
+| /var/spool/cron/crontabs/ | crontab storage |
+
 
 ### Subdirectories of /ark
 
