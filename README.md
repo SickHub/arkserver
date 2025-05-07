@@ -76,7 +76,7 @@ For this to be handled correctly:
 - Ensure all required folders are mounted and have their permissions *manually* set to 1001/1001 before using the container
 - No Linux capabilities are needed
 - privileged mode is not needed
-- The container will not prevent any Privilege Escalation
+- The container will not attempt any Privilege Escalation
 
 #### Running with a hardened filesystem
 
