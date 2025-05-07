@@ -99,7 +99,7 @@ fi
 echo -e "\n\narkserverroot=\"$ARKSERVER\"\n" >> /ark/config/arkmanager.cfg
 printenv | sed -n -r 's/am_(.*)=(.*)/\1=\"\2\"/ip' >> /ark/config/arkmanager.cfg
 
-if [ -w /var/spool/cron/crontabs/ ]; then
+if [ ! -w /var/spool/cron/crontabs/ ]; then
  echo "Hardened filesystem detect, cannot setup Crontab..."
 else
 
