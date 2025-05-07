@@ -76,18 +76,18 @@ echo "Cleaning up any leftover arkmanager files..."
 [ -f $ARKSERVER/ShooterGame/Saved/.autorestart-main ] && rm -rf $ARKSERVER/ShooterGame/Saved/.autorestart-main
 
 # Create necessary directories if they don't exist
-[ ! -d /ark/config ] && mkdir /ark/config
-[ ! -d /ark/log ] && mkdir /ark/log
-[ ! -d /ark/backup ] && mkdir /ark/backup
-[ ! -d /ark/staging ] && mkdir /ark/staging
+[ ! -d /ark/config ] && mkdir /ark/config || { echo "Directory creation failed, permissions for /ark/config:"; ls -ld "/ark/config"; }
+[ ! -d /ark/log ] && mkdir /ark/log || { echo "Directory creation failed, permissions for /ark/log:"; ls -ld "/ark/log"; }
+[ ! -d /ark/backup ] && mkdir /ark/backup || { echo "Directory creation failed, permissions for /ark/backup:"; ls -ld "/ark/backup"; }
+[ ! -d /ark/staging ] && mkdir /ark/staging || { echo "Directory creation failed, permissions for /ark/staging:"; ls -ld "/ark/staging"; }
 
 if [ ! -d $ARKSERVER/ShooterGame/Binaries ]; then
   echo "No game files found. Preparing for install..."
-  mkdir -p $ARKSERVER/ShooterGame
-  mkdir -p $ARKSERVER/ShooterGame/Saved/Config/LinuxServer
-  mkdir -p $ARKSERVER/ShooterGame/Saved/$am_ark_AltSaveDirectoryName
-  mkdir -p $ARKSERVER/ShooterGame/Content/Mods
-  mkdir -p $ARKSERVER/ShooterGame/Binaries/Linux/
+  mkdir -p $ARKSERVER/ShooterGame || { echo "Directory creation failed, permissions for ${ARKSERVER}/ShooterGame:"; ls -ld "${ARKSERVER}/ShooterGame"; }
+  mkdir -p $ARKSERVER/ShooterGame/Saved/Config/LinuxServer || { echo "Directory creation failed, permissions for ${ARKSERVER}/ShooterGame/Saved/Config/LinuxServer:"; ls -ld "$ARKSERVER/ShooterGame/Saved/Config/LinuxServer"; }
+  mkdir -p $ARKSERVER/ShooterGame/Saved/$am_ark_AltSaveDirectoryName || { echo "Directory creation failed, permissions for ${ARKSERVER}/ShooterGame/Saved/${am_ark_AltSaveDirectoryName}:"; ls -ld "${ARKSERVER}/ShooterGame/Saved/${am_ark_AltSaveDirectoryName}"; }
+  mkdir -p $ARKSERVER/ShooterGame/Content/Mods || { echo "Directory creation failed, permissions for ${ARKSERVER}/ShooterGame/Content/Mods:"; ls -ld "${ARKSERVER}/ShooterGame/Content/Mods"; }
+  mkdir -p $ARKSERVER/ShooterGame/Binaries/Linux/ || { echo "Directory creation failed, permissions for ${ARKSERVER}/ShooterGame/Binaries/Linux/:"; ls -ld "${ARKSERVER}/ShooterGame/Binaries/Linux/"; }
 fi
 
 echo "Creating arkmanager.cfg from environment variables..."
