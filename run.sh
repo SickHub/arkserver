@@ -58,13 +58,13 @@ if [ "$ARKCLUSTER" = "true" ]; then
 fi
 
 echo "Cleaning up potential leftover lock files..."
-rm -f $ARKSERVER/ShooterGame/Saved/.ark-warn-main.lock
-rm -f $ARKSERVER/ShooterGame/Saved/.ark-update.lock
-rm -f $ARKSERVER/ShooterGame/Saved/.ark-update.time
-rm -f $ARKSERVER/ShooterGame/Saved/.arkmanager-main.pid
-rm -f $ARKSERVER/ShooterGame/Saved/.arkserver-main.pid
-rm -f $ARKSERVER/ShooterGame/Saved/.autorestart
-rm -f $ARKSERVER/ShooterGame/Saved/.autorestart-main
+[ -f $ARKSERVER/ShooterGame/Saved/.ark-warn-main.lock ] && rm -rf $ARKSERVER/ShooterGame/Saved/.ark-warn-main.lock
+[ -f $ARKSERVER/ShooterGame/Saved/.ark-update.lock ] && rm -rf $ARKSERVER/ShooterGame/Saved/.ark-update.lock
+[ -f $ARKSERVER/ShooterGame/Saved/.ark-update.time ] && rm -rf $ARKSERVER/ShooterGame/Saved/.ark-update.time
+[ -f $ARKSERVER/ShooterGame/Saved/.arkmanager-main.pid ] && rm -rf $ARKSERVER/ShooterGame/Saved/.arkmanager-main.pid
+[ -f $ARKSERVER/ShooterGame/Saved/.arkserver-main.pid ] && rm -rf $ARKSERVER/ShooterGame/Saved/.arkserver-main.pid
+[ -f $ARKSERVER/ShooterGame/Saved/.autorestart ] && rm -rf $ARKSERVER/ShooterGame/Saved/.autorestart
+[ -f $ARKSERVER/ShooterGame/Saved/.autorestart-main ] && rm -rf $ARKSERVER/ShooterGame/Saved/.autorestart-main
 
 echo "Ensuring directory structure..."
 mkdir -p /ark/config /ark/log /ark/backup /ark/staging
