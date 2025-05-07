@@ -1,37 +1,59 @@
 #!/usr/bin/env bash
 
+# Define directories
 SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 REPODIR="$(dirname "$SCRIPTDIR")"
 ARKSERVER=${ARKSERVER_SHARED:-"/ark/server"}
 
-# always fail script if a cmd fails
+# Always fail script if a command fails
 set -eo pipefail
 
 echo "###########################################################################"
 echo "# Ark Server - " `date`
 echo "###########################################################################"
 
-echo "Ensuring correct permissions..."
-sudo find /ark -not -user steam -o -not -group steam -exec chown -v steam:steam {} \;
-sudo find /home/steam -not -user steam -o -not -group steam -exec chown -v steam:steam {} \;
+# Determine if the user has root or sudo privileges
+if sudo -n true 2>/dev/null; then
+    HAS_PRIVILEGES="true"
+    echo "Detected sudo capable user... Continuing..."
+else
+    HAS_PRIVILEGES="false"
+    echo "Detected user that is not sudo-capable, Continuing without sudo..."
+fi
+
+# Ensure correct file permissions (checking ownership) only if root/sudo is available
+if [ "$HAS_PRIVILEGES" = "true" ]; then
+    echo "Ensuring correct permissions..."
+    sudo find /ark -not -user steam -o -not -group steam -exec chown -v steam:steam {} \;
+    sudo find /home/steam -not -user steam -o -not -group steam -exec chown -v steam:steam {} \;
+else
+    echo "Skipping permission fix as root or sudo privileges are not available."
+fi
 
 if [ -n "$ARKSERVER_SHARED" ]; then
-  # directory is created when something is mounted to 'Saved'
-  [ -d "$ARKSERVER_SHARED/ShooterGame" ] && sudo chown steam:steam $ARKSERVER_SHARED/ShooterGame
+  # Directory created when something is mounted to 'Saved'
+  if [ "$HAS_PRIVILEGES" = "true" ] && [ -d "$ARKSERVER_SHARED/ShooterGame" ]; then
+    sudo chown steam:steam $ARKSERVER_SHARED/ShooterGame
+  fi
   echo "Shared server files in $ARKSERVER_SHARED..."
+  
+  # Ensure the Saved directory is mounted properly
   if [ -z "$(mount | grep "on $ARKSERVER_SHARED/ShooterGame/Saved ")" ]; then
     echo "===> ABORT !"
     echo "You seem to be using a shared server directory: '$ARKSERVER_SHARED'"
     echo "But you have NOT mounted your game instance saved directory to '$ARKSERVER_SHARED/ShooterGame/Saved'"
     exit 1
   fi
-  # Shared server files does not support staging directory
+
+  # Shared server files do not support staging directory
   export am_arkStagingDir=
 fi
 
+# Cluster setup
 if [ "$ARKCLUSTER" = "true" ]; then
-  # directory is created when something is mounted to 'clusters'
-  [ -d "$ARKSERVER/ShooterGame/Saved" ] && sudo chown steam:steam $ARKSERVER/ShooterGame/Saved
+  if [ "$HAS_PRIVILEGES" = "true" ] && [ -d "$ARKSERVER/ShooterGame/Saved" ]; then
+    sudo chown steam:steam $ARKSERVER/ShooterGame/Saved
+  fi
   echo "Shared clusters files in $ARKSERVER/ShooterGame/Saved/clusters..."
   if [ -z "$(mount | grep "on $ARKSERVER/ShooterGame/Saved/clusters ")" ]; then
     echo "===> ABORT !"
@@ -53,34 +75,37 @@ echo "Cleaning up any leftover arkmanager files..."
 [ -f $ARKSERVER/ShooterGame/Saved/.autorestart ] && rm -rf $ARKSERVER/ShooterGame/Saved/.autorestart
 [ -f $ARKSERVER/ShooterGame/Saved/.autorestart-main ] && rm -rf $ARKSERVER/ShooterGame/Saved/.autorestart-main
 
-# Create directories if they don't exist
+# Create necessary directories if they don't exist
 [ ! -d /ark/config ] && mkdir /ark/config
 [ ! -d /ark/log ] && mkdir /ark/log
 [ ! -d /ark/backup ] && mkdir /ark/backup
 [ ! -d /ark/staging ] && mkdir /ark/staging
 
 if [ ! -d $ARKSERVER/ShooterGame/Binaries ]; then
-	echo "No game files found. Preparing for install..."
-	mkdir -p $ARKSERVER/ShooterGame
+  echo "No game files found. Preparing for install..."
+  mkdir -p $ARKSERVER/ShooterGame
   mkdir -p $ARKSERVER/ShooterGame/Saved/Config/LinuxServer
   mkdir -p $ARKSERVER/ShooterGame/Saved/$am_ark_AltSaveDirectoryName
-	mkdir -p $ARKSERVER/ShooterGame/Content/Mods
-	mkdir -p $ARKSERVER/ShooterGame/Binaries/Linux/
+  mkdir -p $ARKSERVER/ShooterGame/Content/Mods
+  mkdir -p $ARKSERVER/ShooterGame/Binaries/Linux/
 fi
-
 
 echo "Creating arkmanager.cfg from environment variables..."
 echo -e "# Ark Server Tools - arkmanager config\n# Generated from container environment variables\n\n" > /ark/config/arkmanager.cfg
 if [ -f /ark/config/arkmanager_base.cfg ]; then
-	cat /ark/config/arkmanager_base.cfg >> /ark/config/arkmanager.cfg
+  cat /ark/config/arkmanager_base.cfg >> /ark/config/arkmanager.cfg
 fi
 
 echo -e "\n\narkserverroot=\"$ARKSERVER\"\n" >> /ark/config/arkmanager.cfg
 printenv | sed -n -r 's/am_(.*)=(.*)/\1=\"\2\"/ip' >> /ark/config/arkmanager.cfg
 
+if [ -w /var/spool/cron/crontabs/ ]; then
+ echo "Hardened filesystem detect, cannot setup Crontab..."
+else
+
 if [ ! -f /ark/config/crontab ]; then
-	echo "Creating crontab..."
-	cat << EOF >> /ark/config/crontab
+  echo "No crontab found, Creating crontab..."
+  cat << EOF >> /ark/config/crontab
 # Example of job definition:
 # .---------------- minute (0 - 59)
 # |  .------------- hour (0 - 23)
@@ -94,7 +119,6 @@ if [ ! -f /ark/config/crontab ]; then
 # 0 * * * * arkmanager update				# update every hour
 # */15 * * * * arkmanager backup			# backup every 15min
 # 0 0 * * * arkmanager backup				# backup every day at midnight
-
 */30 * * * * arkmanager update --update-mods --warn --saveworld
 10 */8 * * * arkmanager saveworld && arkmanager backup
 15 10 * * * arkmanager restart --warn --saveworld
@@ -105,14 +129,21 @@ fi
 # If there is uncommented line in the file
 CRONNUMBER=`grep -v "^#" /ark/config/crontab | wc -l`
 if [ $CRONNUMBER -gt 0 ]; then
-	echo "Starting cron service..."
+if [ "$HAS_PRIVILEGES" = false ]; then
+        echo "Starting cron in background as non-root..."
+        cron && tail -f /dev/null
+else
+        echo "Starting cron service..."
 	sudo service cron start
+fi
 
 	echo "Loading crontab..."
 	# We load the crontab file if it exist.
 	crontab /ark/config/crontab
+	
 else
 	echo "No crontab set."
+fi
 fi
 
 # Create symlinks for configs
