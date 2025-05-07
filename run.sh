@@ -146,7 +146,6 @@ else
 fi
 fi
 
-
 # Create symlinks for configs
 [ -f /ark/config/AllowedCheaterSteamIDs.txt ] && ln -sf /ark/config/AllowedCheaterSteamIDs.txt $ARKSERVER/ShooterGame/Saved/AllowedCheaterSteamIDs.txt
 [ -f /ark/config/Engine.ini ] && ln -sf /ark/config/Engine.ini $ARKSERVER/ShooterGame/Saved/Config/LinuxServer/Engine.ini
