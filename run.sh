@@ -233,9 +233,9 @@ fi
 # fix for broken steamcmd app_info_print: execute install/update manually, checking for updates fails.
 # https://github.com/ValveSoftware/steam-for-linux/issues/9683#issuecomment-1826928761
 if [ ! -f "$ARKSERVER/steamapps/appmanifest_376030.acf" ]; then
-  arkmanager install --verbose
+  arkmanager install ${VERBOSE:+--verbose}
 elif [ "$am_arkAutoUpdateOnStart" = "true" ]; then
-  arkmanager update --force --no-autostart --verbose
+  arkmanager update --force --no-autostart ${VERBOSE:+--verbose}
 fi
 
 # run in subshell, so it does not trap signals
