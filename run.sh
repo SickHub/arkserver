@@ -165,6 +165,44 @@ if [ "$LIST_MOUNTS" = "true" ]; then
   done
 fi
 
+
+  if [ "$ARKCLUSTER" = "true" ]; then
+    echo "--> $ARKSERVER/ShooterGame/Saved/clusters"
+    ls -la $ARKSERVER/ShooterGame/Saved/clusters
+  fi
+  mount | grep "on /ark"
+  exit 0
+fi
+
+if [ "$am_arkAutoUpdateOnStart" != "true" ]; then
+  echo -n "Waiting for ARK server to be updated: "
+  while (! arkmanager checkupdate); do
+    echo -n "."
+    sleep 10
+  done
+  echo
+
+  if [ -n "$am_ark_GameModIds" ]; then
+    echo -n "Waiting for mods to be updated: "
+    # requires arkmanager >= v1.6.62
+    while (arkmanager checkmodupdate --skip-workshop-dir); do
+      echo -n "."
+      sleep 10
+    done
+    echo
+  fi
+fi
+
+# fix for broken steamcmd app_info_print: execute install/update manually, checking for updates fails.
+# https://github.com/ValveSoftware/steam-for-linux/issues/9683#issuecomment-1826928761
+if [ ! -f "$ARKSERVER/steamapps/appmanifest_376030.acf" ]; then
+  arkmanager install
+elif [ "$am_arkAutoUpdateOnStart" = "true" ]; then
+  arkmanager update --force --no-autostart
+fi
+
 # === START ARK SERVER ===
-echo "Starting Ark server..."
-exec arkmanager run
+# run in subshell, so it does not trap signals
+(arkmanager start --no-background --verbose) &
+arkmanpid=$!
+wait $arkmanpid
