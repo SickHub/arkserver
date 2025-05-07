@@ -63,7 +63,6 @@ if [ "$ARKCLUSTER" = "true" ]; then
   fi
 fi
 
-
 # Remove arkmanager tracking files if they exist
 # They can cause issues with starting the server multiple times
 # due to the restart command not completing when the container exits
@@ -100,7 +99,6 @@ fi
 echo -e "\n\narkserverroot=\"$ARKSERVER\"\n" >> /ark/config/arkmanager.cfg
 printenv | sed -n -r 's/am_(.*)=(.*)/\1=\"\2\"/ip' >> /ark/config/arkmanager.cfg
 
-
 if [ -w /var/spool/cron/crontabs/ ]; then
  echo "Hardened filesystem detect, cannot setup Crontab..."
 else
@@ -131,7 +129,6 @@ fi
 # If there is uncommented line in the file
 CRONNUMBER=`grep -v "^#" /ark/config/crontab | wc -l`
 if [ $CRONNUMBER -gt 0 ]; then
-	
 if [ "$HAS_PRIVILEGES" = false ]; then
         echo "Starting cron in background as non-root..."
         cron && tail -f /dev/null
