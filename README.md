@@ -36,10 +36,10 @@ For more information on `arkmanager`, see the repo here: [arkmanager/ark-server-
 * Inherently includes all features present in `arkmanager`
 
 ### Tags
-| Tag | Description |
-|--|--|
-| latest | most recent build from the master branch |
-| x.x.x (semver) | release builds |
+| Tag            | Description                              |
+|----------------|------------------------------------------|
+| latest         | most recent build from the master branch |
+| x.x.x (semver) | release builds                           |
 
 ## Usage
 
@@ -69,20 +69,22 @@ If the exposed ports are modified (in the case of multiple containers/servers on
 
 A set of required environment variables have default values provided as part of the image:
 
-| Variable | Value | Description |
-| - | - | - |
-| am_ark_SessionName | `Ark Server` | Server name as it will show on the steam server list |
-| am_serverMap | `TheIsland` | Game map to load |
-| am_ark_ServerAdminPassword | `k3yb04rdc4t` | Admin password to be used via ingame console or RCON |
-| am_ark_MaxPlayers | `70` | Max concurrent players in the game |
-| am_ark_QueryPort | `27015` | Steam query port (allows the server to show up on the steam list) |
-| am_ark_Port | `7778` | Game server port (allows clients to connect to the server) |
-| am_ark_RCONPort | `32330` | RCON port |
-| am_arkwarnminutes | `15` | Number of minutes to wait/warn players before updating/restarting |
-| am_arkflag_crossplay | `false` | Allow crossyplay with Players on Epic |
-| ARKCLUSTER | `false` | If true, requires `ShooterGame/Saved/clusters` to be mounted |
-| ARKSERVER_SHARED | `` | To optionally share server binary files, use `/arkserver` volume, see below |
-| LOG_RCONCHAT | `0` | Fetch chat commands every X seconds and log them to stdout, `0` = disabled |
+| Variable                   | Value         | Description                                                                  |
+|----------------------------|---------------|------------------------------------------------------------------------------|
+| am_ark_SessionName         | `Ark Server`  | Server name as it will show on the steam server list                         |
+| am_serverMap               | `TheIsland`   | Game map to load                                                             |
+| am_ark_ServerAdminPassword | `k3yb04rdc4t` | Admin password to be used via ingame console or RCON                         |
+| am_ark_MaxPlayers          | `70`          | Max concurrent players in the game                                           |
+| am_ark_QueryPort           | `27015`       | Steam query port (allows the server to show up on the steam list)            |
+| am_ark_Port                | `7778`        | Game server port (allows clients to connect to the server)                   |
+| am_ark_RCONPort            | `32330`       | RCON port                                                                    |
+| am_arkwarnminutes          | `15`          | Number of minutes to wait/warn players before updating/restarting            |
+| am_arkflag_crossplay       | `false`       | Allow crossyplay with Players on Epic                                        |
+| ARKCLUSTER                 | `false`       | If true, requires `ShooterGame/Saved/clusters` to be mounted                 |
+| ARKSERVER_SHARED           |               | To optionally share server binary files, use `/arkserver` volume, see below  |
+| LOG_RCONCHAT               | `0`           | Fetch chat commands every X seconds and log them to stdout, `0` = disabled   |
+| AM_INSTALL_ARGS            |               | Optional arguments to `arkmanager install`, for example `--beta=preaquatica` |
+| AM_UPDATE_ARGS             |               | Optional arguments to `arkmanager update`                                    |
 
 ### Adding Additional Variables
 
@@ -108,25 +110,25 @@ The optional volumes can be used to share the server binary files or `clusters` 
 > [!IMPORTANT]
 > The `steam` user in the image has UID/GID 1001/1001. All files on the host must give read/write access to this UID/GID.
 
-| Path | Description |
-| - | - |
-| /home/steam/.steam/steamapps | Directory of steamapps and workshop files. Should be mounted so that mod installs are persisted between container runs/restarts |
-| /ark | Directory that will contain the server files, config files, logs and backups. More information below |
-| /arkserver | (optional, $ARKSERVER_SHARED) Directory that contains the server binary files from steam, shared for multiple instances |
-| /arkserver/ShooterGame/Saved | (depends) Directory that contains the game save files - must be mounted if using shared server files |
+| Path                                  | Description                                                                                                                                               |
+|---------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------|
+| /home/steam/.steam/steamapps          | Directory of steamapps and workshop files. Should be mounted so that mod installs are persisted between container runs/restarts                           |
+| /ark                                  | Directory that will contain the server files, config files, logs and backups. More information below                                                      |
+| /arkserver                            | (optional, $ARKSERVER_SHARED) Directory that contains the server binary files from steam, shared for multiple instances                                   |
+| /arkserver/ShooterGame/Saved          | (depends) Directory that contains the game save files - must be mounted if using shared server files                                                      |
 | /arkserver/ShooterGame/Saved/clusters | (depends) Directory that contains the shared cluster files required to jump from one ARK server to another - must be mounted if using shared server files |
 
 ### Subdirectories of /ark
 
 Inside the `/ark` volume there are several directories containing server related files:
 
-| Path | Description |
-| - | - |
-| /ark/backup | Location of the zipped backups genereated from the `arkmaanger backup` command. Compressed using bz2. |
-| /ark/config | Location of server config files. More information: |
-| /ark/log | Location of the arkmanager and arkserver log files |
-| /ark/server | Location of the server installation performed by `steamcmd`. This will contain the ShooterGame directory and the actual server binaries. |
-| /ark/staging | Default directory for staging game and mod updates. Can be changed using in `arkmanager.cfg` |
+| Path         | Description                                                                                                                              |
+|--------------|------------------------------------------------------------------------------------------------------------------------------------------|
+| /ark/backup  | Location of the zipped backups genereated from the `arkmaanger backup` command. Compressed using bz2.                                    |
+| /ark/config  | Location of server config files. More information:                                                                                       |
+| /ark/log     | Location of the arkmanager and arkserver log files                                                                                       |
+| /ark/server  | Location of the server installation performed by `steamcmd`. This will contain the ShooterGame directory and the actual server binaries. |
+| /ark/staging | Default directory for staging game and mod updates. Can be changed using in `arkmanager.cfg`                                             |
 
 ## Running a cluster
 In order to run an ARK cluster, all you need are multiple servers sharing the `clusters` directory and using a shared, 
