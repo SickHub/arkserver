@@ -69,20 +69,22 @@ If the exposed ports are modified (in the case of multiple containers/servers on
 
 A set of required environment variables have default values provided as part of the image:
 
-| Variable | Value | Description |
-| - | - | - |
-| am_ark_SessionName | `Ark Server` | Server name as it will show on the steam server list |
-| am_serverMap | `TheIsland` | Game map to load |
-| am_ark_ServerAdminPassword | `k3yb04rdc4t` | Admin password to be used via ingame console or RCON |
-| am_ark_MaxPlayers | `70` | Max concurrent players in the game |
-| am_ark_QueryPort | `27015` | Steam query port (allows the server to show up on the steam list) |
-| am_ark_Port | `7778` | Game server port (allows clients to connect to the server) |
-| am_ark_RCONPort | `32330` | RCON port |
-| am_arkwarnminutes | `15` | Number of minutes to wait/warn players before updating/restarting |
-| am_arkflag_crossplay | `false` | Allow crossyplay with Players on Epic |
-| ARKCLUSTER | `false` | If true, requires `ShooterGame/Saved/clusters` to be mounted |
-| ARKSERVER_SHARED | `` | To optionally share server binary files, use `/arkserver` volume, see below |
-| LOG_RCONCHAT | `0` | Fetch chat commands every X seconds and log them to stdout, `0` = disabled |
+| Variable                   | Value         | Description                                                                  |
+|----------------------------|---------------|------------------------------------------------------------------------------|
+| am_ark_SessionName         | `Ark Server`  | Server name as it will show on the steam server list                         |
+| am_serverMap               | `TheIsland`   | Game map to load                                                             |
+| am_ark_ServerAdminPassword | `k3yb04rdc4t` | Admin password to be used via ingame console or RCON                         |
+| am_ark_MaxPlayers          | `70`          | Max concurrent players in the game                                           |
+| am_ark_QueryPort           | `27015`       | Steam query port (allows the server to show up on the steam list)            |
+| am_ark_Port                | `7778`        | Game server port (allows clients to connect to the server)                   |
+| am_ark_RCONPort            | `32330`       | RCON port                                                                    |
+| am_arkwarnminutes          | `15`          | Number of minutes to wait/warn players before updating/restarting            |
+| am_arkflag_crossplay       | `false`       | Allow crossyplay with Players on Epic                                        |
+| ARKCLUSTER                 | `false`       | If true, requires `ShooterGame/Saved/clusters` to be mounted                 |
+| ARKSERVER_SHARED           | ``            | To optionally share server binary files, use `/arkserver` volume, see below  |
+| LOG_RCONCHAT               | `0`           | Fetch chat commands every X seconds and log them to stdout, `0` = disabled   |
+| AM_INSTALL_ARGS            | ``            | Optional arguments to `arkmanager install`, for example `--beta=preaquatica` |
+| AM_UPDATE_ARGS             | ``            | Optional arguments to `arkmanager update`                                    |
 
 ### Adding Additional Variables
 
