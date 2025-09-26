@@ -28,6 +28,7 @@ function testNewSimpleServer() {
     -e ARKCLUSTER=false \
     -e ARKSERVER_SHARED= \
     -e LIST_MOUNTS=true \
+    -e AM_INSTALL_ARGS=--beta=preaquatica \
     $IMAGE:$TAG
   [ $? -ne 0 ] && echo "FAIL: docker exec failed"
 
@@ -48,6 +49,7 @@ function testNewSharedServerFail() {
     -v $PWD/arkclusters:/arkclusters \
     -v $PWD/arkserver:/arkserver \
     -e LIST_MOUNTS=true \
+    -e AM_INSTALL_ARGS=--beta=preaquatica \
     $IMAGE:$TAG
   [ $? -eq 0 ] && echo "FAIL: docker failure expected!"
 
@@ -68,6 +70,7 @@ function testNewSharedServer() {
     -v $PWD/arkclusters:/arkserver/ShooterGame/Saved/clusters \
     -v $PWD/arkserver:/arkserver \
     -e LIST_MOUNTS=true \
+    -e AM_INSTALL_ARGS=--beta=preaquatica \
     $IMAGE:$TAG
   [ $? -ne 0 ] && echo "FAIL: docker failed!"
 
@@ -94,6 +97,7 @@ function testMigratedServer() {
     -v $PWD/arkclusters:/arkserver/ShooterGame/Saved/clusters \
     -v $PWD/arkserver:/arkserver \
     -e LIST_MOUNTS=true \
+    -e AM_INSTALL_ARGS=--beta=preaquatica \
     $IMAGE:$TAG
   [ $? -ne 0 ] && echo "FAIL: docker exec failed"
 
@@ -119,6 +123,7 @@ function testSharedMount() {
     -v $PWD/$serverdir/saved:/arkserver/ShooterGame/Saved \
     -v $PWD/arkclusters:/arkserver/ShooterGame/Saved/clusters \
     -v $PWD/arkserver-persistent:/arkserver \
+    -e AM_INSTALL_ARGS=--beta=preaquatica \
     $IMAGE:$TAG
 
   # start the second server - it should wait for mods
@@ -129,6 +134,7 @@ function testSharedMount() {
     -v $PWD/$serverdir/saved:/arkserver/ShooterGame/Saved \
     -v $PWD/arkclusters:/arkserver/ShooterGame/Saved/clusters \
     -v $PWD/arkserver-persistent:/arkserver \
+    -e AM_INSTALL_ARGS=--beta=preaquatica \
     $IMAGE:$TAG
   [ $? -ne 0 ] && echo "FAIL: docker exec failed"
 
