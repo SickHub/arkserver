@@ -1,0 +1,35 @@
+services:
+  arkserver:
+    image: drpsychick/arkserver:latest
+    container_name: arkserver
+    restart: always
+    ports:
+      - "27015:27015"
+      - "27015:27015/udp"
+      - "7778:7778"
+      - "7778:7778/udp"
+      - "7777:7777"
+      - "7777:7777/udp"
+      # Uncomment for RCON
+      # - "32330:32330"
+      # - "32330:32330/udp"
+    environment:
+      ### CHANGE THESE
+      - am_ark_SessionName=Ark Server
+      - am_serverMap=Fjordur
+      - am_ark_ServerAdminPassword=
+      - am_ark_ServerPassword=
+      - am_ark_MaxPlayers=20
+      - am_arkflag_crossplay=false
+      - am_arkwarnminutes=60
+      ### LEAVE THESE
+      - am_ark_QueryPort=27015
+      - am_ark_Port=7778
+      - am_arkserverroot="/ark/server"
+      - am_arkserverexec="ShooterGame/Binaries/Linux/ShooterGameServer"
+      # RCON stuff if you need
+      - am_ark_RCONPort=32330
+      - LOG_RCONCHAT=0
+    volumes: # Persistent data
+      - /srv/ark-server/steam:/home/steam/.steam/steamapps
+      - /srv/ark-server/ark:/ark
