@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: arkserver
+spec:
+  serviceName: arkserver
+  replicas: 1
+  selector:
+    matchLabels:
+      app: arkserver
+  template:
+    metadata:
+      labels:
+        app: arkserver
+    spec:
+      securityContext:
+        fsGroup: 1001
+      containers:
+        - name: arkserver
+          image: drpsychick/arkserver:latest
+          ports:
+            - containerPort: 27015
+              protocol: UDP
+              name: query
+            - containerPort: 7778
+              protocol: UDP
+              name: game
+            - containerPort: 7778
+              protocol: TCP
+              name: game-tcp
+            - containerPort: 32330
+              protocol: TCP
+              name: rcon
+            - containerPort: 8080
+              protocol: TCP
+              name: health
+          env:
+            - name: am_ark_SessionName
+              value: "My ARK Server"
+            - name: am_serverMap
+              value: TheIsland
+            - name: am_ark_ServerAdminPassword
+              valueFrom:
+                secretKeyRef:
+                  name: ark-secrets
+                  key: admin-password
+            - name: am_ark_MaxPlayers
+              value: "20"
+            - name: am_arkAutoUpdateOnStart
+              value: "true"
+            - name: HEALTH_SERVER
+              value: "true"
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 120
+            periodSeconds: 30
+            timeoutSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /livez
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          resources:
+            requests:
+              memory: 12Gi
+              cpu: 2000m
+            limits:
+              memory: 16Gi
+          volumeMounts:
+            - name: ark-data
+              mountPath: /ark
+  volumeClaimTemplates:
+    - metadata:
+        name: ark-data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 50Gi
