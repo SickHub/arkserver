@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: arkserver
+spec:
+  type: LoadBalancer
+  sessionAffinity: ClientIP
+  sessionAffinityConfig:
+    clientIP:
+      timeoutSeconds: 10800
+  selector:
+    app: arkserver
+  ports:
+    - port: 27015
+      targetPort: 27015
+      protocol: UDP
+      name: query
+    - port: 7778
+      targetPort: 7778
+      protocol: UDP
+      name: game
+    - port: 7778
+      targetPort: 7778
+      protocol: TCP
+      name: game-tcp
+    - port: 32330
+      targetPort: 32330
+      protocol: TCP
+      name: rcon
+    - port: 8080
+      targetPort: 8080
+      protocol: TCP
+      name: health

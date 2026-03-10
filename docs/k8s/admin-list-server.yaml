@@ -1,0 +1,134 @@
+---
+# Secret — store Steam IDs here (or use External Secrets Operator to sync from Vault)
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ark-admin-ids
+stringData:
+  admins.txt: |
+    # One Steam ID per line (hex32 format)
+    # Comments and blank lines are ignored
+    01234567890ABCDEF
+    FEDCBA9876543210
+---
+# ConfigMap — nginx config
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ark-admin-list-nginx-conf
+data:
+  nginx.conf: |
+    load_module modules/ngx_http_js_module.so;
+
+    events {}
+    http {
+      js_path /etc/nginx/njs/;
+      js_import main from main.mjs;
+
+      server {
+        listen 8080;
+
+        location /AllowedCheaterSteamIDs.txt {
+          js_content main.serve_ids;
+        }
+        location /PlayersJoinNoCheckList.txt {
+          js_content main.serve_ids;
+        }
+        location /PlayersExclusiveJoinList.txt {
+          js_content main.serve_ids;
+        }
+        location / {
+          return 404;
+        }
+      }
+    }
+---
+# ConfigMap — njs script that reads, deduplicates, and serves Steam IDs
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ark-admin-list-njs
+data:
+  main.mjs: |
+    import fs from "fs";
+
+    const DATA_DIR = "/vault-data";
+
+    function loadSteamIds() {
+      let ids = new Set();
+      try {
+        let files = fs.readdirSync(DATA_DIR);
+        for (let f of files) {
+          let content = fs.readFileSync(`${DATA_DIR}/${f}`, "utf8");
+          for (let line of content.split("\n")) {
+            line = line.trim();
+            if (line && !line.startsWith("#") && /^[0-9A-Fa-f]{16,}$/.test(line)) {
+              ids.add(line);
+            }
+          }
+        }
+      } catch (e) {
+        // secret not mounted or empty
+      }
+      return Array.from(ids);
+    }
+
+    function serve_ids(r) {
+      let ids = loadSteamIds();
+      r.headersOut["Content-Type"] = "text/plain";
+      r.return(200, ids.join("\n") + "\n");
+    }
+
+    export default { serve_ids };
+---
+# Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ark-admin-list-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ark-admin-list-server
+  template:
+    metadata:
+      labels:
+        app: ark-admin-list-server
+    spec:
+      containers:
+        - name: nginx
+          image: docker.io/nginx:alpine
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: nginx-conf
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+            - name: njs
+              mountPath: /etc/nginx/njs/
+            - name: steam-ids
+              mountPath: /vault-data
+              readOnly: true
+      volumes:
+        - name: nginx-conf
+          configMap:
+            name: ark-admin-list-nginx-conf
+        - name: njs
+          configMap:
+            name: ark-admin-list-njs
+        - name: steam-ids
+          secret:
+            secretName: ark-admin-ids
+---
+# Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: ark-admin-list-server
+spec:
+  selector:
+    app: ark-admin-list-server
+  ports:
+    - port: 8080
+      targetPort: 8080

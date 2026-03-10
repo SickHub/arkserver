@@ -1,0 +1,32 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: arkserver-ingress
+spec:
+  podSelector:
+    matchLabels:
+      app: arkserver
+  policyTypes:
+    - Ingress
+  ingress:
+    # Game + Query (UDP from players)
+    - ports:
+        - port: 7778
+          protocol: UDP
+        - port: 27015
+          protocol: UDP
+    # Game (TCP for Epic crossplay)
+    - ports:
+        - port: 7778
+          protocol: TCP
+    # RCON (TCP, restrict to admin sources)
+    - from:
+        - ipBlock:
+            cidr: 10.0.0.0/8     # adjust to your admin CIDR
+      ports:
+        - port: 32330
+          protocol: TCP
+    # Health endpoint (for monitoring/probes)
+    - ports:
+        - port: 8080
+          protocol: TCP

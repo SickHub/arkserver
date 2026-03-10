@@ -241,6 +241,12 @@ elif [ "$am_arkAutoUpdateOnStart" = "true" ]; then
   arkmanager update --force --no-autostart ${AM_UPDATE_ARGS}
 fi
 
+# Start health server if enabled
+if [ "$HEALTH_SERVER" = "true" ]; then
+  echo "Starting health server on port ${HEALTH_SERVER_PORT:-8080}..."
+  python3 /home/steam/health-server.py &
+fi
+
 # run in subshell, so it does not trap signals
 (arkmanager start --no-background --verbose) &
 arkmanpid=$!
