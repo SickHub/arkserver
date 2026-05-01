@@ -15,6 +15,7 @@ RUN apt-get update \
     lsof \
     libc6-i386 \
 #    libsdl2-2.0.0:i386 \
+    rsync \
     sudo \
     && apt-get autoremove -y \
     && apt-get clean -y \
