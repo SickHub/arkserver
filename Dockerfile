@@ -3,6 +3,9 @@ ARG AMG_BUILD=latest
 # github-releases:arkmanager/ark-server-tools
 ARG AMG_VERSION=v1.6.69
 FROM drpsychick/steamcmd:$STEAMCMD_VERSION AS base
+LABEL org.opencontainers.image.authors="drpsychick@drsick.net"
+LABEL org.opencontainers.image.description="ARK: Survival Evolved game server with arkmanager"
+LABEL org.opencontainers.image.source="https://github.com/SickHub/arkserver"
 
 USER root
 
